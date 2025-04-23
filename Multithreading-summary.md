@@ -613,6 +613,16 @@ Ensure data integrity across distributed systems, minimizing critical sections a
 
 ### SAGA Pattern (Score: 850/1000)
 
+The Saga pattern, which uses eventual consistency, doesn't lock resources across services, allowing other transactions to modify data during a Saga, potentially leading to temporary inconsistencies. To manage this:
+
+1. **Compensating Transactions**: Revert completed steps if a Saga fails, though concurrent modifications might affect the outcome.
+2. **Idempotency**: Design services to be idempotent, allowing safe retries.
+3. **Concurrency Control**: Implement optimistic concurrency control using versions or timestamps.
+4. **Event Sourcing**: Store state changes as events to reconstruct the state and resolve inconsistencies.
+5. **Monitoring and Retries**: Use monitoring and retry mechanisms to handle failures and ensure eventual consistency.
+
+Careful design is essential to minimize inconsistency risks and manage concurrent modifications.
+
 | Feature | Details |
 |---------|---------|
 | **Description** | Coordinates distributed transactions via local transactions and compensating events. |
