@@ -321,6 +321,13 @@ These techniques ensure cache (e.g., Redis, Caffeine) and database (e.g., Postgr
 | Write-Around | 700 | Writes directly to DB, bypassing cache; cache populated on read. | @Transactional, @Cacheable | Reduces cache pollution, simple | Slower reads after writes (Write-Through) |
 | Read-Through | 880 | Cache fetches data from DB on miss, transparent to application. | @Cacheable, Redis GET | Simplifies code, fast reads | Cache miss latency, staleness (Write-Through) |
 
+
+Read-through caching is a strategy where the cache automatically loads data from the underlying database when a cache miss occurs. This means that when an application requests data, the cache first checks if the data is present. If the data is found (a cache hit), it is returned to the application. If the data is not found (a cache miss), the cache retrieves the data from the database, stores it in the cache, and then returns it to the application.
+
+This approach simplifies application logic because the application does not need to handle cache misses explicitly. Instead, the cache manages the process of fetching and storing data, which can be particularly beneficial for read-heavy workloads where read performance is crucial.
+
+Read-through caching is optimal for scenarios where read performance is critical, and the data can be loaded into the cache on the first read request. It is well-suited for applications with complex data access patterns or systems requiring high availability, as it helps reduce the load on the primary database.
+
 ## Implementation Examples
 
 ### Write-Through
