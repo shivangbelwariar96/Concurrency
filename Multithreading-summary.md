@@ -736,6 +736,38 @@ class EventService {
 }
 ```
 
+
+I'll convert this information into Markdown-compatible tables for you. Here are the formatted tables:
+
+### Table 1: Comparison of Concurrency Control Methods
+
+| Feature | Optimistic Concurrency Control | Pessimistic Concurrency Control |
+|---------|--------------------------------|--------------------------------|
+| **Core Idea** | No lock is acquired during read/update; conflicts detected at commit using versioning. | Lock acquired before accessing the data to prevent others from modifying concurrently. |
+| **How it Works** | Compare version number (or timestamp) before commit; if mismatch, abort transaction. | Acquires a lock (`READ` or `WRITE`) using SQL commands or annotations to block other transactions. |
+| **Spring Boot Implementation** | `@Version` annotation + JPA's version-based entity management. | Use `@Lock(LockModeType.PESSIMISTIC_WRITE)` or native query with `FOR UPDATE`. |
+| **JPA Example Code** | `@Version`<br>`private Integer version;` On `save()`, JPA checks version match. | `@Lock(LockModeType.PESSIMISTIC_WRITE)`<br>`@Query("SELECT e FROM Entity e WHERE id = :id")` |
+| **Exception on Conflict** | `OptimisticLockingFailureException` or `ObjectOptimisticLockingFailureException`. | May throw `PessimisticLockException`, or transaction may wait/block until lock is available. |
+| **Performance** | Non-blocking, better for high-throughput, low-conflict systems. | Slower due to locks and potential contention, but safer under high-conflict scenarios. |
+| **Deadlocks** | Not possible (no locking). | Possible due to lock ordering or timeout if multiple transactions wait on each other. |
+| **Database Dependency** | Works well with both SQL and NoSQL (e.g., DynamoDB, Cassandra support versioning). | Mainly used with RDBMS (MySQL, Postgres, Oracle) that support row/record locking. |
+| **Common Use Cases** | Shopping carts, profile edits, CMS drafts, user-generated content. | Bank account transfers, inventory deduction, ticket booking, and other critical operations. |
+| **Pros** | - Better scalability<br>- Avoids deadlocks<br>- Good for stateless APIs | - Ensures strict consistency<br>- Easier conflict resolution during execution |
+| **Cons** | - Retry needed on conflict<br>- May fail frequently in high contention scenarios | - Lower performance in concurrent environments<br>- Risk of deadlocks |
+| **Best for** | - Systems with low probability of update conflicts<br>- Asynchronous user actions | - Systems with critical data integrity and high write contention<br>- Synchronous and transactional processes |
+
+### Table 2: Use Case Examples
+
+| Use Case | Concurrency Control Style | Spring Boot Approach |
+|----------|--------------------------|----------------------|
+| Product Review Posting | **Optimistic** | Use `@Version` on `ReviewEntity` |
+| Bank Transfer | **Pessimistic** | Lock account rows with `@Lock(PESSIMISTIC_WRITE)` |
+| Ticket Booking | **Pessimistic** | Lock seat rows during booking to avoid double booking |
+| Profile Update (Low Risk) | **Optimistic** | Allow optimistic update with retry on version mismatch |
+| Inventory Update (E-commerce) | Mixed – depends on model | Optimistic for warehouse sync, Pessimistic for cart checkout if real-time inventory |
+
+
+
 ### Optimistic Locking (Score: 800/1000)
 
 | Feature | Details |
