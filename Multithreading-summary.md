@@ -680,6 +680,23 @@ class CacheService {
 
 ### Distributed Locks (Score: 820/1000)
 
+
+Redlock Algorithm Overview
+
+| **Category**            | **Details**                                                                                                                                                   | **Example**                                                                                          |
+|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------|
+| **Purpose**             | Provide distributed locking with fault tolerance and consistency using multiple Redis nodes.                                                                 | Ensures only one instance of order-service processes order_123.                                       |
+| **Deployment**          | N independent Redis instances (e.g., 5 or 7), across different nodes/data centers to avoid shared failure domains.                                            | Redis-A (us-east), Redis-B (us-west), Redis-C (eu-west), Redis-D (ap-south), Redis-E (sa-east)        |
+| **Lock Acquisition Command** | `SET lock:resource_name <unique_client_id> EX <ttl> NX`<br>- NX: only if not exists<br>- EX: expire after ttl seconds                                          | `SET lock:order_123 order-svc-uuid EX 10 NX`                                                          |
+| **Success Criteria**    | Lock is considered acquired if (N/2 + 1) instances respond with success within TTL duration.                                                                 | In 5-node setup: must acquire lock in at least 3 instances.                                           |
+| **Time Check**          | Total time to acquire locks must be < TTL to ensure lock validity.                                                                                           | TTL = 10s, total time to lock = 4s → ✅ valid                                                          |
+| **Failure Handling**    | If fewer than majority locks acquired:<br>• Release all acquired locks<br>• Retry with backoff                                                                 | Only 2/5 Redis responded → client aborts and retries                                                  |
+| **Release Lock**        | DEL only if client owns it. Use Lua script to avoid deleting lock held by others.                                                                            | Lua checks `GET key == <client_id>` before `DEL`                                                      |
+| **Example Lua Script for Safe Unlock** | `lua`<br>`if redis.call("GET", KEYS[1]) == ARGV[1] then return redis.call("DEL", KEYS[1]) else return 0 end`                                               | Releases `lock:order_123` only if `GET == order-svc-uuid`                                             |
+| **Retry Strategy**      | Exponential backoff between retries. Option to fail-fast based on UX requirements.                                                                           | Wait: 100ms → 200ms → 400ms (configurable)                                                            |
+| **Lock Expiry TTL**     | Should be long enough for critical section, but not too long to avoid stale locks.                                                                           | DB update time = 5s → set TTL = 10s                                                                   |
+
+
 | Feature | Details |
 |---------|---------|
 | **Description** | Coordinates access across services using Redis/ZooKeeper. |
