@@ -1,3 +1,108 @@
+# Java Multithreading and Concurrency
+
+## Introduction to Multithreading
+- Definition of Multithreading
+- Benefits and Challenges of Multithreading
+- Processes vs. Threads
+- Multithreading in Java
+- Java Memory Model of Process and Thread
+
+## Basics of Threads - Part 1: Creating Threads
+- Extending the Thread Class
+- Implementing the Runnable Interface
+- Thread Lifecycle:
+  - New
+  - Runnable
+  - Blocked
+  - Waiting
+  - Timed Waiting
+  - Terminated
+
+## Basics of Thread - Part 2: Inter-Thread Communication and Synchronization
+- Synchronization and Thread Safety
+- Synchronized Methods
+- Synchronized Blocks
+- Inter-Thread Communication:
+  - `wait()`, `notify()`, and `notifyAll()` methods
+- Producer-Consumer Problem (Assignment)
+
+## Basics of Threads - Part 3
+- Producer-Consumer Problem (Solution discussion)
+- Why `stop()`, `resume()`, `suspend()` methods are deprecated and their alternatives
+- Thread Joining
+- Volatile Keyword
+- Thread Priority and Daemon Threads
+
+## Advanced Topics
+- Thread Pools
+- Executor Framework
+- ThreadPoolExecutor
+- Callable and Future
+- Fork/Join Framework
+- ThreadLocal in Multithreading
+
+## Concurrency Utilities
+- `java.util.concurrent` Package
+- Executors and ExecutorService
+- Callable and Future
+- CompletableFuture
+- ScheduledExecutorService
+- CountDownLatch, CyclicBarrier, Phaser, and Exchanger
+
+## Concurrent Collections
+- ConcurrentHashMap
+- ConcurrentLinkedQueue and ConcurrentLinkedDeque
+- CopyOnWriteArrayList
+- BlockingQueue Interface:
+  - ArrayBlockingQueue
+  - LinkedBlockingQueue
+  - PriorityBlockingQueue
+
+## Atomic Variables
+- AtomicInteger, AtomicLong, and AtomicBoolean
+- AtomicReference and AtomicReferenceArray
+- Compare-and-Swap Operations
+
+## Locks and Semaphores
+- ReentrantLock
+- ReadWriteLock
+- StampedLock
+- Semaphores
+- Lock and Condition Interface
+
+## Parallel Streams
+
+## Best Practices and Patterns
+- Thread Safety Best Practices
+- Immutable Objects
+- ThreadLocal Usage
+- Double-Checked Locking and its Issues
+- Concurrency Design Patterns
+
+## Common Concurrency Issues and Solutions
+- Deadlocks
+- Starvation
+- Livelocks
+- Race Conditions
+- Strategies for Avoiding Concurrency Issues
+
+## Java 9+ Features
+- Reactive Programming with Flow API
+- CompletableFuture Enhancements
+- Process API Updates
+
+## Java 11+ Features
+- Local-Variable Type Inference (var keyword)
+- Enhancements in Optional class
+- New Methods in the String class relevant to concurrency
+
+SEARCH ABOUT ABOVE IN GROK/CHATGPT 
+
+
+And also read below(diff topics):
+
+
+
 apart from executor framework, how large tech companies (FAANG+) do multi threading in spring boot ? Ans how do they make the critical section thread safe
 
 I only want to know the widely used techniques that faang companies use
